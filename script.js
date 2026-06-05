@@ -1,21 +1,16 @@
-const API_KEY = "YOUR_API_KEY";
-
-const searchBtn = document.getElementById("searchBtn");
 const searchInput = document.getElementById("searchInput");
 const booksContainer = document.getElementById("booksContainer");
 const loading = document.getElementById("loading");
 
-searchBtn.addEventListener("click", () => {
+const bookForm = document.getElementById("bookForm");
+
+bookForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
     const query = searchInput.value.trim();
 
-    if(query !== ""){
+    if(query){
         fetchBooks(query);
-    }
-});
-
-searchInput.addEventListener("keypress", (e) => {
-    if(e.key === "Enter"){
-        fetchBooks(searchInput.value.trim());
     }
 });
 
@@ -26,8 +21,9 @@ async function fetchBooks(query){
         loading.classList.remove("hidden");
         booksContainer.innerHTML = "";
 
-        const url =
-  `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=20&key=AIzaSyCcGEEoXYtPSPx7bFDop5EVz9UWFXJ2sOA`;
+
+       const url =
+`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=20&key=${API_KEY}`;
 
         const response = await fetch(url);
 
@@ -77,11 +73,21 @@ function displayBooks(books){
             "https://via.placeholder.com/250x350?text=No+Cover";
 
         const description =
-            info.description?.substring(0, 150) + "..." ||
-            "No description available.";
+            info.description
+        ? info.description.substring(0, 150) + "..."
+        : "No description available.";
 
         const rating =
             info.averageRating || "N/A";
+
+        const publishedDate =
+            info.publishedDate || "Unknown";
+
+        const pageCount =
+            info.pageCount || "Unknown";
+
+        const publisher =
+            info.publisher || "Unknown";
 
         const card = document.createElement("div");
 
@@ -104,6 +110,15 @@ function displayBooks(books){
                 <p class="rating">
                     ⭐ Rating: ${rating}
                 </p>
+                
+                <p class="published">
+                    📅 Published: ${publishedDate}</p>
+
+                <p class="pages">
+                    📖 Pages: ${pageCount}</p>
+
+                <p class="publisher">
+                    🏢 Publisher: ${publisher}</p>
 
                 <button class="favorite-btn">
                     ❤️ Save Favorite
